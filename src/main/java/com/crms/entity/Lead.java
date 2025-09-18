@@ -22,4 +22,5 @@ public class Lead {
 	private String email;
 	private String phone;
 	private String status = "New"; // New, Contacted, Qualified
+	private String createdBy;
 }

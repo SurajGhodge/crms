@@ -13,4 +13,5 @@ public class CustomerDto {
 	private String email;
 	private String phone;
 	private String company;
+	private String createdBy;
 }

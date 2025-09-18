@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,16 +36,32 @@ public class AuthController {
 		u.setName(body.get("name"));
 		u.setEmail(body.get("email"));
 		u.setPassword(passwordEncoder.encode(body.get("password")));
-		u.setRole(body.getOrDefault("role", "SALES"));
+		u.setRole(body.get("role"));
 		userRepo.save(u);
 		return ResponseEntity.ok("User created");
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
-		Authentication auth = authManager
-				.authenticate(new UsernamePasswordAuthenticationToken(req.get("email"), req.get("password")));
-		String token = jwtUtil.generateToken(((UserDetails) auth.getPrincipal()).getUsername());
-		return ResponseEntity.ok(Map.of("token", token));
+	    Authentication auth = authManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(
+	                    req.get("email"),
+	                    req.get("password")
+	            )
+	    );
+
+	    String token = jwtUtil.generateToken(((UserDetails) auth.getPrincipal()).getUsername());
+
+	    // Extract role
+	    String role = auth.getAuthorities().stream()
+	            .findFirst()
+	            .map(GrantedAuthority::getAuthority)
+	            .orElse("ROLE_USER"); // default fallback
+
+	    return ResponseEntity.ok(Map.of(
+	            "token", token,
+	            "role", role
+	    ));
 	}
+
 }

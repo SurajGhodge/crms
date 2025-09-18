@@ -5,6 +5,7 @@ import com.crms.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,7 +26,9 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CustomerDto addCustomer(@RequestBody CustomerDto dto) {
+    public CustomerDto addCustomer(@RequestBody CustomerDto dto,Principal principal) {
+    	String name=principal.getName();
+    	dto.setCreatedBy(name);
         return customerService.addCustomer(dto);
     }
 

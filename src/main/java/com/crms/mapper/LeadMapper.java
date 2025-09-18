@@ -8,7 +8,7 @@ public class LeadMapper {
 	public static LeadDto toDTO(Lead lead) {
 		if (lead == null)
 			return null;
-		return new LeadDto(lead.getId(), lead.getName(), lead.getEmail(), lead.getPhone(), lead.getStatus());
+		return new LeadDto(lead.getId(), lead.getName(), lead.getEmail(), lead.getPhone(), lead.getStatus(), lead.getCreatedBy());
 	}
 
 	public static Lead toEntity(LeadDto dto) {
@@ -20,6 +20,7 @@ public class LeadMapper {
 		lead.setEmail(dto.getEmail());
 		lead.setPhone(dto.getPhone());
 		lead.setStatus(dto.getStatus());
+		lead.setCreatedBy(dto.getCreatedBy());
 		return lead;
 	}
 }

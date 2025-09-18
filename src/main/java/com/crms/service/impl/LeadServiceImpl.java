@@ -1,20 +1,25 @@
 package com.crms.service.impl;
 
 import com.crms.dto.LeadDto;
+import com.crms.entity.Customer;
 import com.crms.entity.Lead;
 import com.crms.mapper.LeadMapper;
+import com.crms.repository.CustomerRepository;
 import com.crms.repository.LeadRepository;
 import com.crms.service.LeadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LeadServiceImpl implements LeadService {
 
     @Autowired
     private LeadRepository leadRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public List<LeadDto> getAllLeads() {
@@ -54,4 +59,25 @@ public class LeadServiceImpl implements LeadService {
     public void deleteLead(Long id) {
         leadRepository.deleteById(id);
     }
+
+	@Override
+	public Customer convertLeadToCustomer(Long leadId, String company) {
+		 Optional<Lead> leadOpt = leadRepository.findById(leadId);
+	        if (leadOpt.isEmpty()) {
+	            throw new RuntimeException("Lead not found");
+	        }
+
+	        Lead lead = leadOpt.get();
+	        Customer customer = new Customer();
+	        customer.setName(lead.getName());
+	        customer.setEmail(lead.getEmail());
+	        customer.setPhone(lead.getPhone());
+	        customer.setCompany(company);
+	        customer.setCreatedBy(lead.getCreatedBy());
+
+	        customerRepository.save(customer);
+	        leadRepository.deleteById(leadId); // optional: remove lead after conversion
+
+	        return customer;
+	}
 }

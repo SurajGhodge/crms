@@ -9,7 +9,7 @@ public class CustomerMapper {
 		if (customer == null)
 			return null;
 		return new CustomerDto(customer.getId(), customer.getName(), customer.getEmail(), customer.getPhone(),
-				customer.getCompany());
+				customer.getCompany(), customer.getCreatedBy());
 	}
 
 	public static Customer toEntity(CustomerDto dto) {
@@ -21,6 +21,7 @@ public class CustomerMapper {
 		customer.setEmail(dto.getEmail());
 		customer.setPhone(dto.getPhone());
 		customer.setCompany(dto.getCompany());
+		customer.setCreatedBy(dto.getCreatedBy());
 		return customer;
 	}
 }

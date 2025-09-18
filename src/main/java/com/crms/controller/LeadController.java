@@ -1,11 +1,13 @@
 package com.crms.controller;
 
 import com.crms.dto.LeadDto;
+import com.crms.entity.Customer;
 import com.crms.service.impl.LeadServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -13,7 +15,7 @@ import java.util.List;
 public class LeadController {
 
 	@Autowired
-	private  LeadServiceImpl leadService;
+	private LeadServiceImpl leadService;
 
 	@GetMapping
 	public List<LeadDto> getAllLeads() {
@@ -26,7 +28,9 @@ public class LeadController {
 	}
 
 	@PostMapping
-	public LeadDto addLead(@RequestBody LeadDto dto) {
+	public LeadDto addLead(@RequestBody LeadDto dto,Principal principal) {
+		String name=principal.getName();
+		 dto.setCreatedBy(name);
 		return leadService.addLead(dto);
 	}
 
@@ -38,5 +42,10 @@ public class LeadController {
 	@DeleteMapping("/{id}")
 	public void deleteLead(@PathVariable Long id) {
 		leadService.deleteLead(id);
+	}
+
+	@PostMapping("/{leadId}/convert")
+	public Customer convertLead(@PathVariable Long leadId, @RequestParam String company) {
+		return leadService.convertLeadToCustomer(leadId, company);
 	}
 }
